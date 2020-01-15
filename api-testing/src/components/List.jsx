@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
-const apiBase = "https://jsonplaceholder.typicode.com";
-const apiGetDummy = `${apiBase}/todos/1`;
+// const apiBase = "https://jsonplaceholder.typicode.com";
+// const apiGetDummy = `${apiBase}/todos/1`;
 
 const apiGet = "localhost:5000/api/users";
 
@@ -23,7 +23,7 @@ const List = () => {
   const { id, title, completed } = list;
   return (
     <div>
-      {!list ? (
+      {list.length === 0 ? (
         <h3>no data...</h3>
       ) : (
         <div>

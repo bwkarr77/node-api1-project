@@ -1,17 +1,33 @@
 // implement your API here
 // yarn add express
+const cors = require("cors"); // installs cors
 const express = require("express"); //imports the express package
 //const http = require('http'); // built in node.js module to handle http traffic
-const cors = require("cors");
 
-const Users = require("./data/db.js");
-
+const Data = require("./data/db.js"); //import the data file
 const server = express(); //creates express application using express module.
 
 server.use(express.json());
 server.use(cors());
 
-server.post("/api/users", (req, res) => {
+server.options("*", cors());
+
+const corsOptions = {
+  origin: "http://localhost:3000"
+};
+
+var allowCrossDomain = function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
+  res.header("Access-Control-Allow-Headers", "Content-Type");
+  next();
+};
+
+// server.configure(function() {
+//   server.use(allowCrossDomain);
+// });
+
+server.post("/api/users", cors(corsOptions), (req, res) => {
   const { name, bio } = req.body;
 
   if (!name || !bio) {
@@ -21,7 +37,7 @@ server.post("/api/users", (req, res) => {
       .json({ errorMessage: "Please provide name and bio for the user" });
   } else {
     //valid user -> save the new user to the database
-    Users.insert(req.body)
+    Data.insert(req.body)
       .then(user => {
         res
           .status(201) //created user
@@ -38,8 +54,8 @@ server.post("/api/users", (req, res) => {
   }
 });
 
-server.get("/api/users", (req, res) => {
-  Users.find()
+server.get("/api/users", cors(corsOptions), (req, res) => {
+  Data.find()
     .then(user => {
       res
         .status(200) //successful get user info
@@ -54,8 +70,8 @@ server.get("/api/users", (req, res) => {
     });
 });
 
-server.get("/api/users/:id", (req, res) => {
-  Users.findById(req.params.id)
+server.get("/api/users/:id", cors(corsOptions), (req, res) => {
+  Data.findById(req.params.id)
     .then(user => {
       if (user) {
         res
@@ -74,8 +90,8 @@ server.get("/api/users/:id", (req, res) => {
     });
 });
 
-server.delete("/api/users/:id", (req, res) => {
-  Users.remove(req.params.id)
+server.delete("/api/users/:id", cors(corsOptions), (req, res) => {
+  Data.remove(req.params.id)
     .then(users => {
       if (users && users > 0) {
         res
@@ -94,7 +110,7 @@ server.delete("/api/users/:id", (req, res) => {
     });
 });
 
-server.put("/api/users/:id", (req, res) => {
+server.put("/api/users/:id", cors(corsOptions), (req, res) => {
   const { name, bio } = req.body;
 
   if (!name || !bio) {
@@ -102,7 +118,7 @@ server.put("/api/users/:id", (req, res) => {
       .status(400) //Bad request
       .json({ errorMessage: "Please provide name and bio for the user." });
   } else {
-    Users.update(req.params.id, req.body)
+    Data.update(req.params.id, req.body)
       .then(user => {
         if (user) {
           res
@@ -136,7 +152,7 @@ post (/api/users),(with: {'name': '<name>', "bio": "<description>"}  )
     - returns "id": 3
     ) 
 get (/api/users/1) - gives info for 1 hobbit
-delete (/api/users/1) - 
+delete (/api/users/1) - removes user with id # that matches.
 put (/api/user/1), with: {"name": "<name>", "bio": "<new description>" }
     - returns id number; data is updated
 
