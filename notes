@@ -1,0 +1,6 @@
+
+require('http') vs require('express')
+- http: powerful way to build web applications, BUT requires a lot of code for common tasks.
+- express: simpler version of 'http' that makes it easier to create applications.
+    + Rails and django have stronger frameworks.
+    
