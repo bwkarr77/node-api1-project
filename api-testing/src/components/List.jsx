@@ -4,14 +4,18 @@ import axios from "axios";
 // const apiBase = "https://jsonplaceholder.typicode.com";
 // const apiGetDummy = `${apiBase}/todos/1`;
 
-const apiGet = "localhost:5000/api/users";
+// const proxyurl = "https://cors-anywhere.herokuapp.com/";
+const proxyurl = "";
+const apiBase = "http://localhost:5000/api/users";
+const apiGet = proxyurl + apiBase;
+
+console.log(apiGet);
 
 const List = () => {
   const [list, setList] = useState([]);
   useEffect(() => {
     axios
-      //   .get(apiGetDummy)
-      .get(apiGet)
+      .get(apiBase)
       .then(results => {
         console.log(results.data);
         setList(results.data);

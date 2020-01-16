@@ -1,33 +1,20 @@
 // implement your API here
-// yarn add express
+// $$ yarn add express cors
 const cors = require("cors"); // installs cors
 const express = require("express"); //imports the express package
-//const http = require('http'); // built in node.js module to handle http traffic
-
 const Data = require("./data/db.js"); //import the data file
 const server = express(); //creates express application using express module.
 
+const port = 5000;
+server.listen(port, () =>
+  console.log(`\n*** Listening on port: ${port} ***\n`)
+);
+
+// ===MIDDLEWARE===
 server.use(express.json());
 server.use(cors());
 
-server.options("*", cors());
-
-const corsOptions = {
-  origin: "http://localhost:3000"
-};
-
-var allowCrossDomain = function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
-  res.header("Access-Control-Allow-Headers", "Content-Type");
-  next();
-};
-
-// server.configure(function() {
-//   server.use(allowCrossDomain);
-// });
-
-server.post("/api/users", cors(corsOptions), (req, res) => {
+server.post("/api/users", (req, res) => {
   const { name, bio } = req.body;
 
   if (!name || !bio) {
@@ -54,7 +41,7 @@ server.post("/api/users", cors(corsOptions), (req, res) => {
   }
 });
 
-server.get("/api/users", cors(corsOptions), (req, res) => {
+server.get("/api/users", (req, res) => {
   Data.find()
     .then(user => {
       res
@@ -70,7 +57,7 @@ server.get("/api/users", cors(corsOptions), (req, res) => {
     });
 });
 
-server.get("/api/users/:id", cors(corsOptions), (req, res) => {
+server.get("/api/users/:id", (req, res) => {
   Data.findById(req.params.id)
     .then(user => {
       if (user) {
@@ -90,7 +77,7 @@ server.get("/api/users/:id", cors(corsOptions), (req, res) => {
     });
 });
 
-server.delete("/api/users/:id", cors(corsOptions), (req, res) => {
+server.delete("/api/users/:id", (req, res) => {
   Data.remove(req.params.id)
     .then(users => {
       if (users && users > 0) {
@@ -110,7 +97,7 @@ server.delete("/api/users/:id", cors(corsOptions), (req, res) => {
     });
 });
 
-server.put("/api/users/:id", cors(corsOptions), (req, res) => {
+server.put("/api/users/:id", (req, res) => {
   const { name, bio } = req.body;
 
   if (!name || !bio) {
@@ -139,9 +126,6 @@ server.put("/api/users/:id", cors(corsOptions), (req, res) => {
       });
   }
 });
-
-const port = 5000;
-server.listen(port, () => console.log(`\n*** API on port ${port} ***\n`));
 
 //TESTING RESULTS FROM INSOMNIAC...
 /*
