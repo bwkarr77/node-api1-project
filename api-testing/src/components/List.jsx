@@ -1,30 +1,21 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React, { useEffect } from "react";
+import { connect } from "react-redux";
 
-// const apiBase = "https://jsonplaceholder.typicode.com";
-// const apiGetDummy = `${apiBase}/todos/1`;
+import Unit from "./Unit";
+import NewUser from "./NewUser";
+
+import { getData } from "../actions/actions.jsx";
 
 // const proxyurl = "https://cors-anywhere.herokuapp.com/";
 const proxyurl = "";
 const apiBase = "http://localhost:5000/api/users";
-const apiGet = proxyurl + apiBase;
 
-console.log(apiGet);
-
-const List = () => {
-  const [list, setList] = useState([]);
+const List = ({ getData, list, state, reFetch }) => {
   useEffect(() => {
-    axios
-      .get(apiBase)
-      .then(results => {
-        console.log(results.data);
-        setList(results.data);
-      })
-      .catch(err => console.log(err));
-  }, []);
+    getData();
+  }, [reFetch]);
 
-  console.log("list:", list);
-  const { id, title, completed } = list;
+  console.log("state: ", state, "\nlist1:", list);
   return (
     <div>
       {list.length === 0 ? (
@@ -32,13 +23,22 @@ const List = () => {
       ) : (
         <div>
           <h2>DATA EXISTS!!</h2>
-          <p>
-            {id},{title},{JSON.stringify(completed)}
-          </p>
+          <div className="datashow">
+            {list.map(each => (
+              <Unit each={each} />
+            ))}
+          </div>
         </div>
       )}
+      <NewUser />
     </div>
   );
 };
 
-export default List;
+const mapStateToProps = state => ({
+  state: state,
+  list: state.list,
+  reFetch: state.reFetch
+});
+
+export default connect(mapStateToProps, { getData })(List);
