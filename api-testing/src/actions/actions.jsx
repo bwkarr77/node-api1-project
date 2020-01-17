@@ -28,6 +28,8 @@ export const CANCELEDIT = "CANCELEDIT";
 const apiBase = "http://localhost:5000";
 const apiGet = `${apiBase}/api/users`;
 const apiPost = `${apiBase}/api/users`;
+const apiDelete = `${apiBase}/api/users`;
+const apiPut = `${apiBase}/api/users`;
 
 export const getData = () => dispatch => {
   //   console.log("getData start");
@@ -57,7 +59,7 @@ export const addUser = (event, newUser) => dispatch => {
     });
 };
 export const deleteUnit = unit => dispatch => {
-  Axios.delete(`${apiGet}/${unit}`)
+  Axios.delete(`${apiDelete}/${unit}`)
     .then(res => {
       console.log("successful delete", res);
       return dispatch({ type: DELETEUNIT, payload: unit });
@@ -74,3 +76,25 @@ export const handleChange = (event, formType) => {
     payload: { target: event.target, form: formType }
   };
 };
+
+export const startEdit = id => {
+  return {
+    type: EDITDATASTART,
+    payload: { id }
+  };
+};
+export const saveEdit = data => dispatch => {
+  console.log("saveEdit: ", data);
+  Axios.put(`${apiPut}`, data)
+    .then(res => {
+      console.log(".put success: ", res);
+      dispatch({ type: EDITDATASUCCESS, payload: data });
+    })
+    .catch(e => {
+      console.log(e);
+      return dispatch({ type: EDITDATAFAIL, payload: e });
+    });
+};
+export const cancelEdit = () => ({
+  type: CANCELEDIT
+});

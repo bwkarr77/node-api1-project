@@ -36,6 +36,7 @@ const initialState = {
   isFetching: false,
   list: [{ id: "", name: "", bio: "", created_at: "", updated_at: "" }],
   newUser: { name: "", bio: "" },
+  dataToEdit: { name: "", bio: "" },
 
   isAdding: false,
   isEditing: false,
@@ -95,8 +96,25 @@ export const rootReducer = (state = initialState, { type, payload }) => {
       };
     //edit data from api...
     case EDITDATASTART:
+      console.log(payload);
       return {
-        ...state
+        ...state,
+        isEditing: true,
+        error: "",
+        dataToEdit: {
+          ...state.dataToEdit,
+          dataToEdit: state.list.filter((dataset, index) => {
+            console.log(dataset);
+            if (dataset.id === payload.id) {
+              return false;
+            } else {
+              return {
+                name: dataset.name,
+                bio: dataset.bio
+              };
+            }
+          })
+        }
       };
     case EDITDATASUCCESS:
       return {
@@ -151,6 +169,18 @@ export const rootReducer = (state = initialState, { type, payload }) => {
               ...state.newUser,
               [payload.target.name]: payload.target.value
             }
+          };
+        case "editData":
+          return {
+            ...state,
+            dataToEdit: {
+              ...state.dataToEdit,
+              [payload.target.name]: payload.target.value
+            }
+          };
+        default:
+          return {
+            ...state
           };
       }
     case LOGOUT:

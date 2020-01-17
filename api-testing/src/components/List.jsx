@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 
 import Unit from "./Unit";
 import NewUser from "./NewUser";
+import EditUser from "./EditUser";
 
 import { getData } from "../actions/actions.jsx";
 
@@ -10,7 +11,7 @@ import { getData } from "../actions/actions.jsx";
 const proxyurl = "";
 const apiBase = "http://localhost:5000/api/users";
 
-const List = ({ getData, list, state, reFetch }) => {
+const List = ({ getData, list, state, reFetch, isEditing }) => {
   useEffect(() => {
     getData();
   }, [reFetch]);
@@ -30,7 +31,7 @@ const List = ({ getData, list, state, reFetch }) => {
           </div>
         </div>
       )}
-      <NewUser />
+      {!isEditing ? <NewUser /> : <EditUser />}
     </div>
   );
 };
@@ -38,7 +39,8 @@ const List = ({ getData, list, state, reFetch }) => {
 const mapStateToProps = state => ({
   state: state,
   list: state.list,
-  reFetch: state.reFetch
+  reFetch: state.reFetch,
+  isEditing: state.isEditing
 });
 
 export default connect(mapStateToProps, { getData })(List);

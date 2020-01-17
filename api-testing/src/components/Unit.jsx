@@ -1,15 +1,11 @@
 import React from "react";
 import { connect } from "react-redux";
 
-import { deleteUnit } from "../actions/actions.jsx";
+import { deleteUnit, startEdit } from "../actions/actions.jsx";
 
-const Unit = ({ each, deleteUnit }) => {
+const Unit = ({ each, deleteUnit, startEdit }) => {
   // console.log(props);
   const { id, name, bio, created_at, updated_at } = each;
-
-  const editUser = prop => {
-    console.log(`editUser ${prop}`);
-  };
 
   return (
     <div>
@@ -25,7 +21,14 @@ const Unit = ({ each, deleteUnit }) => {
       >
         delete
       </button>
-      <button onClick={() => editUser(id)}>edit</button>
+      <button
+        onClick={e => {
+          e.stopPropagation();
+          startEdit(id);
+        }}
+      >
+        edit
+      </button>
     </div>
   );
 };
@@ -35,4 +38,4 @@ const mapStateToProps = state => ({
   list: state.list
 });
 
-export default connect(mapStateToProps, { deleteUnit })(Unit);
+export default connect(mapStateToProps, { deleteUnit, startEdit })(Unit);
