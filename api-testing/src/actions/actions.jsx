@@ -25,7 +25,7 @@ export const LOGOUT = "LOGOUT";
 export const DELETEUNIT = "DELETEUNIT";
 export const CANCELEDIT = "CANCELEDIT";
 
-const apiBase = "http://localhost:5000";
+const apiBase = "http://localhost:6050";
 const apiGet = `${apiBase}/api/users`;
 const apiPost = `${apiBase}/api/users`;
 const apiDelete = `${apiBase}/api/users`;
@@ -70,7 +70,7 @@ export const deleteUnit = unit => dispatch => {
 };
 
 export const handleChange = (event, formType) => {
-  console.log(event.target.value, formType);
+  // console.log("handleChange:", event.target.value, formType);
   return {
     type: HANDLECHANGE,
     payload: { target: event.target, form: formType }
@@ -78,17 +78,26 @@ export const handleChange = (event, formType) => {
 };
 
 export const startEdit = id => {
+  console.log(id);
   return {
     type: EDITDATASTART,
-    payload: { id }
+    payload: id
   };
 };
 export const saveEdit = data => dispatch => {
-  console.log("saveEdit: ", data);
-  Axios.put(`${apiPut}`, data)
+  console.log("saveEdit1: ", data);
+  // const sendData = {
+  //   id: `${data[0].id}`,
+  //   name: `${data[0].name}`,
+  //   bio: `${data[0].bio}`
+  // };
+  // console.log("saveEdit2:\n", sendData, data[0].id);
+  const axiosPut = `${apiPut}/${data.id}`;
+  console.log(axiosPut);
+  Axios.put(axiosPut, data)
     .then(res => {
       console.log(".put success: ", res);
-      dispatch({ type: EDITDATASUCCESS, payload: data });
+      dispatch({ type: EDITDATASUCCESS, payload: res.data });
     })
     .catch(e => {
       console.log(e);

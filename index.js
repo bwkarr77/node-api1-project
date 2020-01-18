@@ -5,7 +5,8 @@ const express = require("express"); //imports the express package
 const Data = require("./data/db.js"); //import the data file
 const server = express(); //creates express application using express module.
 
-const port = 5000;
+const port = 6050;
+
 server.listen(port, () =>
   console.log(`\n*** Listening on port: ${port} ***\n`)
 );
@@ -99,18 +100,41 @@ server.delete("/api/users/:id", (req, res) => {
 
 server.put("/api/users/:id", (req, res) => {
   const { name, bio } = req.body;
-
+  const { id } = req.params;
+  console.log(req.params); // {id: '19'}
+  console.log(req.body); // {name: '<entered>', bio: '<desc>'}
   if (!name || !bio) {
     res
       .status(400) //Bad request
       .json({ errorMessage: "Please provide name and bio for the user." });
   } else {
-    Data.update(req.params.id, req.body)
+    Data.findById(id)
       .then(user => {
-        if (user) {
-          res
-            .status(200) //successfully updated user info
-            .json(user); //return the updated information
+        if (!!user) {
+          Data.update(id, req.body)
+            .then(userA => {
+              console.log(userA);
+              Data.findById(id)
+                .then(element => {
+                  res
+                    .status(200) //Ok
+                    .json(element);
+                })
+                .catch(e => {
+                  res
+                    .status(504) //server error
+                    .json({
+                      errorMessage: "The user information could not be modified"
+                    });
+                });
+            })
+            .catch(e => {
+              res
+                .status(500) //server error
+                .json({
+                  errorMessage: "The user information could not be modified"
+                });
+            });
         } else {
           res
             .status(404) //user NOT found
@@ -119,7 +143,7 @@ server.put("/api/users/:id", (req, res) => {
             });
         }
       })
-      .catch(() => {
+      .catch(e => {
         res
           .status(500) //server error
           .json({ errorMessage: "The user information could not be modified" });
@@ -129,7 +153,7 @@ server.put("/api/users/:id", (req, res) => {
 
 //TESTING RESULTS FROM INSOMNIAC...
 /*
-url: localhost:5000
+url: localhost:6050
 
 get (/api/users) - gives list of hobbits
 post (/api/users),(with: {'name': '<name>', "bio": "<description>"}  )

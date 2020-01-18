@@ -7,9 +7,8 @@ import EditUser from "./EditUser";
 
 import { getData } from "../actions/actions.jsx";
 
-// const proxyurl = "https://cors-anywhere.herokuapp.com/";
 const proxyurl = "";
-const apiBase = "http://localhost:5000/api/users";
+const apiBase = "http://localhost:6050/api/users";
 
 const List = ({ getData, list, state, reFetch, isEditing }) => {
   useEffect(() => {
@@ -24,6 +23,9 @@ const List = ({ getData, list, state, reFetch, isEditing }) => {
       ) : (
         <div>
           <h2>DATA EXISTS!!</h2>
+          <div className="new-edit">
+            {!isEditing ? <NewUser /> : <EditUser />}
+          </div>
           <div className="datashow">
             {list.map(each => (
               <Unit each={each} />
@@ -31,7 +33,6 @@ const List = ({ getData, list, state, reFetch, isEditing }) => {
           </div>
         </div>
       )}
-      {!isEditing ? <NewUser /> : <EditUser />}
     </div>
   );
 };

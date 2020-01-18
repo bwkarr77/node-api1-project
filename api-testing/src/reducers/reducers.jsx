@@ -68,6 +68,7 @@ export const rootReducer = (state = initialState, { type, payload }) => {
         isFetching: true
       };
     case GETDATASUCCESS:
+      // console.log(payload);
       return {
         ...state,
         error: "",
@@ -96,34 +97,45 @@ export const rootReducer = (state = initialState, { type, payload }) => {
       };
     //edit data from api...
     case EDITDATASTART:
-      console.log(payload);
+      // console.log(payload);
+      let objReturn = state.list.filter((dataset, index) => {
+        if (dataset.id !== payload) {
+          // console.log('nope\n',dataset.id)
+          return false;
+        } else {
+          console.log("yep", dataset);
+          return dataset;
+        }
+      });
+      console.log(objReturn[0]);
       return {
         ...state,
         isEditing: true,
         error: "",
-        dataToEdit: {
-          ...state.dataToEdit,
-          dataToEdit: state.list.filter((dataset, index) => {
-            console.log(dataset);
-            if (dataset.id === payload.id) {
-              return false;
-            } else {
-              return {
-                name: dataset.name,
-                bio: dataset.bio
-              };
-            }
-          })
-        }
+        dataToEdit: objReturn[0]
       };
     case EDITDATASUCCESS:
+      console.log(payload);
       return {
         ...state,
-        reFetch: !state.reFetch
+        error: "",
+        isEditing: false,
+        dataToEdit: { name: "", bio: "" },
+        reFetch: !state.reFetch,
+        list: state.list.map(each => {
+          if (each.id === payload.id) {
+            return payload;
+          } else {
+            return each;
+          }
+        })
       };
     case EDITDATAFAIL:
       return {
-        ...state
+        ...state,
+        isEditing: false,
+        err: "",
+        dataToEdit: {}
       };
     //add data to api...
     case ADDDATASTART:
@@ -158,9 +170,8 @@ export const rootReducer = (state = initialState, { type, payload }) => {
       return {
         ...state
       };
-    //some more names
     case HANDLECHANGE:
-      console.log(payload);
+      console.log("HANDLECHANGE:", payload);
       switch (payload.form) {
         case "newUser":
           return {
@@ -170,7 +181,7 @@ export const rootReducer = (state = initialState, { type, payload }) => {
               [payload.target.name]: payload.target.value
             }
           };
-        case "editData":
+        case "dataToEdit":
           return {
             ...state,
             dataToEdit: {
